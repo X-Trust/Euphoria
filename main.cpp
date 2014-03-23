@@ -12,17 +12,23 @@ using namespace cv;
 
 int main(){
 
-    VideoCapture video("F:\\projects\\C++\\Euphoria\\test_lab_small.avi") ;
-    MontageClip mntg ;
+    VideoCapture video("test_lab_small.avi"); //video("F:\\projects\\C++\\Euphoria\\test_lab_small.avi") ;
+    VideoWriter  outputVideo;
+    MontageClip  mntg ;
 
-    if (!video.isOpened()){
-        cout  << "FOREVER SADNESSS!!!!!!!" << endl;
-        return -1;
-    }
-
-    //get the frames per seconds of the video
     double fps = video.get(CV_CAP_PROP_FPS);
-    cout << "Frame per seconds : " << fps << endl;
+    double frame_width  = video.get(CV_CAP_PROP_FRAME_WIDTH);
+    double frame_height = video.get(CV_CAP_PROP_FRAME_HEIGHT);
+    Size video_frame_size = Size((int)frame_width,(int)frame_height);
+
+    outputVideo.open("FINAL_VIDEO.avi", -1, fps, video_frame_size, true);
+
+    if (!video.isOpened())       return -1;
+    if (!outputVideo.isOpened()) return -1;
+
+    cout << "Frame per seconds:  " << fps << endl;
+    cout << "Video frame width:  " << frame_width << endl;
+    cout << "Video frame height: " << frame_height << endl;
 
     //video may no longer be needed at this point
     mntg.video_partition( video ) ;

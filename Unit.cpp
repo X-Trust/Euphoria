@@ -49,7 +49,7 @@ int Unit::takeFrames( VideoCapture &vid ){
     for (int i = 0; i < CLIP_SIZE; ++i){
         vid.read(_frames[i]); // read a frame
         if (_frames[i].empty()){ // check if end of video
-            cout << "THIS THING HERE WORKS AS EXPECTED! WHO'ED OF THUNK IT!!" << endl ;
+            cout << "THIS THING HERE WORKS AS EXPECTED! WHO'D OF THUNK IT!!" << endl ;
             for (; i < CLIP_SIZE; ++i) _frames[i] = _frames[i-1];
             return 0 ;
         }
