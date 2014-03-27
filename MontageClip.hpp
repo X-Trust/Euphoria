@@ -10,8 +10,6 @@
 #include <list>
 #include <vector>
 
-
-
 struct MontageClip{
 private:
     std::list<Unit>       _units;
@@ -20,6 +18,8 @@ private:
 public:
     // MontageClip(std::list<Unit>) : _size(50){}
     int video_partition(cv::VideoCapture &vid );
+    void combineClips(cv::VideoWriter &out);
+    void playVideo();
     void addAttributes();
 };
 

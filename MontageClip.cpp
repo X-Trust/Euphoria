@@ -21,7 +21,26 @@ int MontageClip::video_partition( VideoCapture &vid ){
 
 void MontageClip::addAttributes(){
 
-    for( auto it: _units ){
-        it.addAttributes() ;
+    for(Unit &u : _units ){
+        u.addAttributes() ;
     }
+}
+
+void MontageClip::combineClips(VideoWriter &out) {
+    for (Unit u : _units) {
+        for (int i = 0; i < globals::clip_size; i++) {
+            out.write(u._frames[i]);
+        }
+    }
+}
+
+void MontageClip::playVideo() {
+    namedWindow("MONTAGE_PLAY_WINDOW");
+    for (Unit u : _units) {
+        for (int i = 0; i < globals::clip_size; i++) {
+            imshow("MONTAGE_PLAY_WINDOW", u._frames[i]);
+            waitKey(30);
+        }
+    }
+    destroyWindow("MONTAGE_PLAY_WINDOW");
 }
