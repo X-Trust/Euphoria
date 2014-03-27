@@ -12,9 +12,9 @@ using namespace std;
 
 Unit::Unit(){}
 
-Unit::Unit(array<Mat, CLIP_SIZE> frames){
+Unit::Unit(array<Mat, globals::clip_size> frames){
 
-    for (int i = 0; i < CLIP_SIZE; i++) {
+    for (int i = 0; i < globals::clip_size; i++) {
         _frames[i] = frames[i];
     }
 }
@@ -27,7 +27,7 @@ Unit::Unit(VideoCapture &vid){
 
         int i;
 
-        for (i = 0; i < CLIP_SIZE; ++i){
+        for (i = 0; i < globals::clip_size; ++i){
 
             vid.read(_frames[i]); // read a frame
             if (_frames[i].empty()) break;
@@ -37,32 +37,29 @@ Unit::Unit(VideoCapture &vid){
 
         }
 
-        //for (; i < CLIP_SIZE; ++i) _frames[i] = _frames[i-1];
+        //for (; i < globals::clip_size; ++i) _frames[i] = _frames[i-1];
     }
 }
-
 
 int Unit::takeFrames( VideoCapture &vid ){
 
     if (!vid.isOpened()) return -1;
 
-    for (int i = 0; i < CLIP_SIZE; ++i){
+    for (int i = 0; i < globals::clip_size; ++i){
         vid.read(_frames[i]); // read a frame
         if (_frames[i].empty()){ // check if end of video
             cout << "THIS THING HERE WORKS AS EXPECTED! WHO'D OF THUNK IT!!" << endl ;
-            for (; i < CLIP_SIZE; ++i) _frames[i] = _frames[i-1];
+            for (; i < globals::clip_size; ++i) _frames[i] = _frames[i-1];
             return 0 ;
         }
-        imshow( "TEST", _frames[i]);
-        waitKey( 30 ) ;
     }
     return 1 ;
 }
 
 void Unit::addAttributes(){
-
     //list the function for the attributes
-   _features.detectFaces();
-
+    for (int i = 0; i < globals::clip_size; i++) {
+        _features[i].detectFaces(_frames[i]);
+    }
 }
 
