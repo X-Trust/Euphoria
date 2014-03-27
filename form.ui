@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>740</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>171</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Select Video </string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="SSD_FPS">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>50</y>
+     <width>161</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>4</number>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="SSD_Height">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>50</y>
+     <width>161</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>4</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>10</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; text-decoration: underline;&quot;&gt;FPS&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>10</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; text-decoration: underline;&quot;&gt;Height&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>150</y>
+     <width>781</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="SSD_Width">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>50</y>
+     <width>161</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="digitCount">
+    <number>4</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>640</x>
+     <y>10</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:20pt; text-decoration: underline;&quot;&gt;Width&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="graphicsWindow">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>180</y>
+     <width>960</width>
+     <height>540</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
