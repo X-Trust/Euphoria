@@ -78,7 +78,7 @@ void Form::on_pushButton_clicked()
     uniform_int_distribution<unsigned> distribution( 0, UINT_MAX );
     auto dice = bind( distribution, generator );
 
-    cout << dice() << endl;
+    //pass the dice off and let the Euphoria take over
 }
 
 void Form::on_playVideo_clicked()
