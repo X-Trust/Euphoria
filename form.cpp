@@ -2,15 +2,13 @@
 #include "ui_form.h"
 
 #include <QFileDialog>
-
-#include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include "opencv2/highgui/highgui.hpp"
-
 #include <QApplication>
+#include <QString>
+#include <QPixmap>
 
+#include <chrono>
+#include <climits>
+#include <iostream>
 #include "Unit.hpp"
 #include "MontageClip.hpp"
 
@@ -23,6 +21,9 @@ Form::Form(QWidget *parent) :
 
     ui->setupUi(this);
 
+    this->ui->playVideo->setFlat(true);
+    this->ui->playVideo->setStyleSheet("* {color: gray }");
+
 }
 
 Form::~Form()
@@ -32,13 +33,14 @@ Form::~Form()
 
 void Form::on_pushButton_clicked()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString filePath = QFileDialog::getOpenFileName(this,
                                                     tr("Open Image"), ".",
                                                     tr("Image Files (*.avi *.mp4 )"));
 
-    VideoCapture video( fileName.toLocal8Bit().constData() );
+    VideoCapture video( filePath.toLocal8Bit().constData() );
 
-   // if (!video.isOpened()) return;
+    unsigned seed;
+    if (!video.isOpened()) return;
 
     int fps = video.get(CV_CAP_PROP_FPS);
     int frame_width  = video.get(CV_CAP_PROP_FRAME_WIDTH);
@@ -50,9 +52,41 @@ void Form::on_pushButton_clicked()
     this->ui->SSD_Height->display(frame_height);
 
     mntg.video_partition(video);
-    mntg.addAttributes();
+   // mntg.addAttributes();
 
 
+    this->ui->playVideo->setFlat( false );
+    this->ui->playVideo->setStyleSheet("* {color: black}");
 
+    //try to use Qstrings here
+    String temp = this->ui->seedBox->text().toLocal8Bit().constData() ;
+
+    if( temp.size()){
+        for(int i = 0; i < (int)temp.length(); ++i){
+            if( isalpha(temp[i]) or isspace(temp[i] ) ){
+                temp[i] = ( temp[i] % 9) + 48;
+            }
+        }
+        seed = atoi(temp.c_str());
+    }else{
+
+        seed = std::chrono::system_clock::now().time_since_epoch().count();
+        this->ui->seedBox->insert(QString::number(seed));
+    }
+
+    default_random_engine generator(seed) ;
+    uniform_int_distribution<unsigned> distribution( 0, UINT_MAX );
+    auto dice = bind( distribution, generator );
+
+    cout << dice() << endl;
 }
 
+void Form::on_playVideo_clicked()
+{
+    if( !this->ui->playVideo->isFlat() )
+        mntg.playVideo();
+}
+
+void Form::on_seedBox_editingFinished(){
+
+}
