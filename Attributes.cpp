@@ -24,10 +24,6 @@ void Attributes::detectFaces(Mat &frame){
     cvtColor(resized, gs, CV_BGR2GRAY);
     equalizeHist(gs, gs);
 
-    namedWindow("test");
-    imshow("test", gs);
-    waitKey(30);
-
     // detect faces of a reasonable size and put the rectangles in _faces
     face_cas.detectMultiScale(gs, _faces);
 

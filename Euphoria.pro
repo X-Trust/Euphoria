@@ -1,14 +1,20 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG -= qt
 
-QMAKE_CXXFLAGS += -std=c++11
+
+QMAKE_CXXFLAGS += -std=c++0x -pthread
+
+QT       += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+TEMPLATE = app
 
 SOURCES += main.cpp \
     Unit.cpp \
     MontageClip.cpp \
-    Attributes.cpp
+    Attributes.cpp \
+    form.cpp \
+    Effects/effects.cpp
 
 INCLUDEPATH += C:\Qt\build_with_Qt248\debug\include
 
@@ -26,7 +32,13 @@ LIBS += -LC:\Qt\build_with_Qt248\debug\x64\mingw\bin\
              -lopencv_flann248d\
              -lopencv_nonfree248d\
 
+
 HEADERS += \
     MontageClip.hpp \
   Unit.hpp \
-    Globals.h
+    Globals.h \
+    form.hpp \
+    Effects/effects.h
+
+FORMS += \
+    form.ui

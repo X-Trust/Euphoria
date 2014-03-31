@@ -1,27 +1,47 @@
 #ifndef MONTAGECLIP
 #define MONTAGECLIP
 
-#include <opencv2/highgui/highgui.hpp>
+#include "Globals.h"
+
 #include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
+
 #include <Unit.hpp>
 
+#include <functional>
 #include <iostream>
 #include <list>
-#include <vector>
+#include <queue>
+#include <functional>
+
+struct eff_args {
+    //MontageClip &mntg; &Form::updateProgress
+    std::list<Unit>::iterator it;
+    cv::Point A;
+    cv::Point B;
+    unsigned min_frames;
+    unsigned size;
+};
 
 struct MontageClip{
-private:
-    std::list<Unit>       _units;
 
-    int _size;
 public:
-    // MontageClip(std::list<Unit>) : _size(50){}
-    int video_partition(cv::VideoCapture &vid );
+    std::list<Unit> _units;
+    int frame_height;
+    int frame_width;
+    int fps;
+
+    std::default_random_engine generator ;
+    std::uniform_int_distribution<unsigned> distribution;
+    std::queue<std::function<bool(MontageClip&,eff_args&)> > q;
+
+    std::function<unsigned()> dice ;
+    void video_partition(cv::VideoCapture &vid );
     void combineClips(cv::VideoWriter &out);
     void playVideo();
     void addAttributes();
+    unsigned generateQueue();
+    bool addEffects();
+    void bindDice( unsigned seed );
 };
-
 
 #endif // MONTAGECLIP_HPP
