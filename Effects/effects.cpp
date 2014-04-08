@@ -15,7 +15,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-
 using std::list;
 using std::sqrt;
 using std::pow;
@@ -28,7 +27,6 @@ using cv::Size;
 
 void Effects::genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > >&q, MontageClip &mntg, bool tFlag){
 
-
     std::vector< std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > funcs
     {
         {blur, "Blur" },
@@ -39,30 +37,24 @@ void Effects::genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_
    };
 
     unsigned roll;
-
     if (tFlag) roll = funcs.size(); // THIS IS FOR TESTING
     else roll = mntg.dice() % globals::max_effect_number;
-
     for (unsigned i = 0; i < roll; ++i){
-
         if (tFlag) q.push(funcs[i]);  // THIS IS FOR TESTING
         else q.push(funcs[ mntg.dice() % funcs.size()]);
-
     }
-
 }
 
 bool Effects::blur(MontageClip &mntg, eff_args &al){
 
     al.min_frames = al.min_frames % 30;
     al.size = al.size % 10;
+
     for (; al.it != mntg._units.end() || al.min_frames <= 0; al.it++){
-
         if (al.it == mntg._units.end()){return true;}
-
-        for (Mat &frame : al.it->_frames) {
-
+        for (Mat &frame : al.it->_frames){
             if (al.min_frames-- <= 0){return true;}
+
             al.size++;
             cv::blur(frame, frame, Size(al.size, al.size));
         }
@@ -72,16 +64,16 @@ bool Effects::blur(MontageClip &mntg, eff_args &al){
 
 bool Effects::starburst(MontageClip &mntg, eff_args &al){
 
+    if (al.min_frames == 0) return true;
     al.min_frames = al.min_frames % 30;
     std::vector<Mat> spl;
 
     for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames) {
-
+        for (Mat &frame : al.it->_frames){
             if (al.min_frames-- <= 0){return true;}
 
-            split(frame, spl);                // process - extract only the correct channel
-            for (int i =0; i < 3; ++i) {
+            split(frame, spl);                // process - extract only one channel
+            for (int i =0; i < 3; ++i){
                 spl[al.min_frames % 3] = Mat::zeros(Size(frame.cols, frame.rows), spl[0].type());
             }
             merge(spl, frame);
@@ -93,32 +85,22 @@ bool Effects::starburst(MontageClip &mntg, eff_args &al){
 bool Effects::rotateImage(MontageClip &mntg, eff_args &al){
 
     if (al.min_frames == 0) return true;
+    int step, border, angle = 0;
+
     al.min_frames = al.min_frames % 100;
-    int angle = 0;
-    int max = (mntg.dice() % 10) * 360;
-    if (max  == 0) max  = 1;
-    int step = max / al.min_frames;
-    if (step <= 0) step = 1;
-    int border = mntg.frame_width - mntg.frame_height; // THIS CAN AND WILL BREAK!!!!! cell phone vids...
+    step = ((mntg.dice() % 9 + 1) * 360) / al.min_frames;
+    border = mntg.frame_width - mntg.frame_height; // THIS CAN AND WILL BREAK!!!!! cell phone vids...
 
     for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames) {
+        for (Mat &frame : al.it->_frames){
             if (al.min_frames-- <= 0){return true;}
 
             copyMakeBorder(frame,frame,border,border,border,border,0,cv::Scalar(0,0,0));
-
-            //get the affine transformation matrix
             // can probably use this line of code to do some crazy stuff
             Mat matRotation = getRotationMatrix2D(Point(frame.cols / 2, frame.rows / 2), (angle - 180), 1);
-
             // Rotate the image
-            Mat matRotatedFrame;
-            warpAffine(frame, matRotatedFrame, matRotation, frame.size());
-
-            frame = matRotatedFrame;
-
-            frame = Mat(frame, cv::Rect(border, border, mntg.frame_width , mntg.frame_height));
-
+            warpAffine(frame, matRotation, matRotation, frame.size());
+            frame = Mat(matRotation, cv::Rect(border, border, mntg.frame_width , mntg.frame_height));
             angle += step;
         }
     }
@@ -139,7 +121,7 @@ bool Effects::addImage(MontageClip &mntg, eff_args &al){
     // return a movement
 
     for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames) {
+        for (Mat &frame : al.it->_frames){
             if (al.min_frames-- <= 0){return true;}
 
             //apply functions and image to frame
@@ -151,7 +133,7 @@ bool Effects::addImage(MontageClip &mntg, eff_args &al){
 
 bool Effects::diceCheck(MontageClip &mntg, eff_args &al){
 
-    for(int i=0;i < 20; i++)
+    for (int i=0;i < 20; i++)
         cout << mntg.dice() << endl;
 
 }
