@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     MontageClip.cpp \
     Attributes.cpp \
     form.cpp \
-    Effects/effects.cpp
+    Effects/effects.cpp \
+    testbench.cpp
 
 INCLUDEPATH += C:\Qt\build_with_Qt248\debug\include
 
@@ -38,7 +39,9 @@ HEADERS += \
   Unit.hpp \
     Globals.h \
     form.hpp \
-    Effects/effects.h
+    Effects/effects.h \
+    testbench.hpp
 
 FORMS += \
-    form.ui
+    form.ui \
+    testbench.ui

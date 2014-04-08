@@ -4,30 +4,49 @@
 #include "form.hpp"
 #include "Globals.h"
 
+#include <tuple>
 #include <list>
 #include <iostream>
 #include <functional>
+#include <algorithm>
+
 #include <QWidget>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+
 using std::list;
+using std::sqrt;
+using std::pow;
+using std::cout;
+using std::endl;
+
 using cv::Point;
 using cv::Mat;
 using cv::Size;
 
+void Effects::genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > >&q, MontageClip &mntg, bool tFlag){
 
-void Effects::genQueue(std::queue<std::function<bool(MontageClip&,eff_args&)> >&q, MontageClip &mntg){
 
-    std::vector< std::function<bool(MontageClip&,eff_args&)> > funcs{
-      blur,
-      starburst
-    };
-    unsigned roll = mntg.dice() % globals::max_effect_number ;
-    for(unsigned i = 0; i < roll ; ++i ){
+    std::vector< std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > funcs
+    {
+        {blur, "Blur" },
+        {starburst, "starburst" },
+        {rotateImage, "rotateImage"},
+        {addImage, "addImage"},
+        {diceCheck, "DiceCheck"}
+   };
 
-        q.push( funcs[ mntg.dice() % funcs.size()]);
+    unsigned roll;
+
+    if (tFlag) roll = funcs.size(); // THIS IS FOR TESTING
+    else roll = mntg.dice() % globals::max_effect_number;
+
+    for (unsigned i = 0; i < roll; ++i){
+
+        if (tFlag) q.push(funcs[i]);  // THIS IS FOR TESTING
+        else q.push(funcs[ mntg.dice() % funcs.size()]);
 
     }
 
@@ -35,16 +54,15 @@ void Effects::genQueue(std::queue<std::function<bool(MontageClip&,eff_args&)> >&
 
 bool Effects::blur(MontageClip &mntg, eff_args &al){
 
-
-    al.size = al.size % 10 ;
+    al.min_frames = al.min_frames % 30;
+    al.size = al.size % 10;
     for (; al.it != mntg._units.end() || al.min_frames <= 0; al.it++){
 
-        if( al.it == mntg._units.end() ){return true;}
+        if (al.it == mntg._units.end()){return true;}
 
         for (Mat &frame : al.it->_frames) {
 
-            if(al.min_frames-- <= 0){return true;}
-
+            if (al.min_frames-- <= 0){return true;}
             al.size++;
             cv::blur(frame, frame, Size(al.size, al.size));
         }
@@ -54,15 +72,13 @@ bool Effects::blur(MontageClip &mntg, eff_args &al){
 
 bool Effects::starburst(MontageClip &mntg, eff_args &al){
 
+    al.min_frames = al.min_frames % 30;
     std::vector<Mat> spl;
 
     for (; al.it != mntg._units.end(); al.it++){
-
-        if( al.it == mntg._units.end() ){return true;}
-
         for (Mat &frame : al.it->_frames) {
 
-            if(al.min_frames-- <= 0){return true;}
+            if (al.min_frames-- <= 0){return true;}
 
             split(frame, spl);                // process - extract only the correct channel
             for (int i =0; i < 3; ++i) {
@@ -74,3 +90,68 @@ bool Effects::starburst(MontageClip &mntg, eff_args &al){
     return true;
 }
 
+bool Effects::rotateImage(MontageClip &mntg, eff_args &al){
+
+    if (al.min_frames == 0) return true;
+    al.min_frames = al.min_frames % 100;
+    int angle = 0;
+    int max = (mntg.dice() % 10) * 360;
+    if (max  == 0) max  = 1;
+    int step = max / al.min_frames;
+    if (step <= 0) step = 1;
+    int border = mntg.frame_width - mntg.frame_height; // THIS CAN AND WILL BREAK!!!!! cell phone vids...
+
+    for (; al.it != mntg._units.end(); al.it++){
+        for (Mat &frame : al.it->_frames) {
+            if (al.min_frames-- <= 0){return true;}
+
+            copyMakeBorder(frame,frame,border,border,border,border,0,cv::Scalar(0,0,0));
+
+            //get the affine transformation matrix
+            // can probably use this line of code to do some crazy stuff
+            Mat matRotation = getRotationMatrix2D(Point(frame.cols / 2, frame.rows / 2), (angle - 180), 1);
+
+            // Rotate the image
+            Mat matRotatedFrame;
+            warpAffine(frame, matRotatedFrame, matRotation, frame.size());
+
+            frame = matRotatedFrame;
+
+            frame = Mat(frame, cv::Rect(border, border, mntg.frame_width , mntg.frame_height));
+
+            angle += step;
+        }
+    }
+    return true;
+}
+
+bool Effects::lensFlare( MontageClip &mntg, eff_args &al){
+    return true;
+}
+
+bool Effects::addImage(MontageClip &mntg, eff_args &al){
+
+    if (al.min_frames == 0) return true;
+    Mat new_image = cv::imread("F:\\projects\\C++\\Euphoria\\doge.jpg");
+
+    // select movement functions
+    // have movement function act like effect function.
+    // return a movement
+
+    for (; al.it != mntg._units.end(); al.it++){
+        for (Mat &frame : al.it->_frames) {
+            if (al.min_frames-- <= 0){return true;}
+
+            //apply functions and image to frame
+           // things that will do stuff
+        }
+    }
+    return true;
+}
+
+bool Effects::diceCheck(MontageClip &mntg, eff_args &al){
+
+    for(int i=0;i < 20; i++)
+        cout << mntg.dice() << endl;
+
+}

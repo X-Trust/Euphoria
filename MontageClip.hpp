@@ -20,11 +20,11 @@ struct eff_args {
     cv::Point B;
     unsigned min_frames;
     unsigned size;
+    unsigned function_data;
 };
 
 struct MontageClip{
 
-public:
     std::list<Unit> _units;
     int frame_height;
     int frame_width;
@@ -32,7 +32,7 @@ public:
 
     std::default_random_engine generator ;
     std::uniform_int_distribution<unsigned> distribution;
-    std::queue<std::function<bool(MontageClip&,eff_args&)> > q;
+    std::queue<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > q;
 
     std::function<unsigned()> dice ;
     void video_partition(cv::VideoCapture &vid );

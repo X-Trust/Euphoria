@@ -12,10 +12,14 @@
 
 namespace Effects {
 
-void genQueue(std::queue<std::function<bool(MontageClip&,eff_args&)> > &q, MontageClip &mntg);
+void genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string> > &q, MontageClip &mntg, bool tFlag);
 
 bool blur(MontageClip &mntg, eff_args &al);
 bool starburst(MontageClip &mntg, eff_args &al);
+bool rotateImage(MontageClip &mntg, eff_args &al);
+bool lensFlare(MontageClip &mntg, eff_args &al);
+bool addImage(MontageClip &mntg, eff_args &al);
+bool diceCheck(MontageClip &mntg, eff_args &al);
 
 }
 

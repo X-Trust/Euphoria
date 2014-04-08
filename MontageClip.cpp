@@ -13,7 +13,7 @@ using namespace cv;
 
 
 unsigned MontageClip::generateQueue(){
-    Effects::genQueue(q, *this);
+    Effects::genQueue(q, *this, false);
     return q.size();
 }
 
@@ -68,7 +68,7 @@ bool MontageClip::addEffects(){
         //set the minimum number of frames to opperate on
         arglist.min_frames = dice();
 
-        q.front()(*this,arglist);
+        q.front().first(*this,arglist);
 
         q.pop();
     //}
