@@ -18,36 +18,43 @@ unsigned MontageClip::generateQueue(){
 }
 
 void MontageClip::video_partition( VideoCapture &vid ){
-    for (;;){
-        Unit temp;
-        if(!temp.takeFrames(vid)) return;
-        _units.push_back( temp );
-    }
+    _media.resize(vid.get(CV_CAP_PROP_FRAME_COUNT)); // Sets the starting size of the array
+    cout << _media.size() << endl;
+    cout << "THINGS SHOULD WORK" << endl;
+    cout << _media.size() << endl ;
+    for(unsigned i = 0; i < _media.size(); i++)
+         vid.read( _media[i]._frame );
+
+
 }
 
+//if(!_media._frame.takeFrames(vid)) return;
+// _units.push_back( temp );
+
 void MontageClip::addAttributes(){
-    for (Unit &u : _units){
-        u.addAttributes() ;
-    }
+    for(unsigned i = 0; i < _media.size(); i++)
+         _media[i].detectFaces();
+
+        //Dont forget to add any additional functions
 }
 
 void MontageClip::combineClips(VideoWriter &out){
-    for (Unit u : _units) {
-        for (int i = 0; i < globals::clip_size; i++){
-            out.write(u._frames[i]);
-        }
-    }
+   for(unsigned i = 0; i < _media.size(); i++)
+        out.write(_media[i]._frame);
+
+
 }
 
 void MontageClip::playVideo(){
-    namedWindow("MONTAGE_PLAY_WINDOW");
-    for (Unit u : _units){
-        for (int i = 0; i < globals::clip_size; i++){
-            imshow("MONTAGE_PLAY_WINDOW", u._frames[i]);
-            waitKey(30);
-        }
+    cv::namedWindow("MONTAGE_PLAY_WINDOW");
+
+    cv::imshow("MONTAGE_PLAY_WINDOW", _media[0]._frame );
+    cv::waitKey(30);
+    for ( auto video : _media ){
+        cv::imshow("MONTAGE_PLAY_WINDOW", video._frame );
+        cv::waitKey(30);
     }
-    destroyWindow("MONTAGE_PLAY_WINDOW");
+    cv::destroyWindow("MONTAGE_PLAY_WINDOW");
 }
 
 bool MontageClip::addEffects(){
@@ -55,8 +62,9 @@ bool MontageClip::addEffects(){
     eff_args arglist;
 
    // while(!q.empty()){
+
         //set start location in the clip
-        arglist.it = _units.begin(); advance( arglist.it, (dice() % _units.size()));
+        arglist.it = dice() % _media.size();
 
         //set start and end location of the frame where the effect will be applied
         arglist.A.x = dice() % frame_width; arglist.A.y = dice() % frame_height;
@@ -66,6 +74,7 @@ bool MontageClip::addEffects(){
         arglist.size = dice();
 
         //set the minimum number of frames to opperate on
+        //This should be modded by the function
         arglist.min_frames = dice();
 
         q.front().first(*this,arglist);
@@ -77,7 +86,7 @@ bool MontageClip::addEffects(){
 
 void MontageClip::bindDice(unsigned seed){
     generator    = default_random_engine(seed);
-    distribution = std::uniform_int_distribution<unsigned>( 0, UINT_MAX );
+    distribution = std::uniform_int_distribution<unsigned>( 1, UINT_MAX);
     dice = bind(distribution, generator);
 }
 

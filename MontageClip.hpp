@@ -15,7 +15,7 @@
 
 struct eff_args {
     //MontageClip &mntg; &Form::updateProgress
-    std::list<Unit>::iterator it;
+    int it;
     cv::Point A;
     cv::Point B;
     unsigned min_frames;
@@ -23,9 +23,19 @@ struct eff_args {
     unsigned function_data;
 };
 
+
+struct Attributes{
+   std::vector<cv::Rect> _faces;
+   cv::Mat _frame;
+
+   //Don't forget to add new functions to addAttributes
+   void detectFaces();
+
+};
+
 struct MontageClip{
 
-    std::list<Unit> _units;
+    std::vector<Attributes> _media;
     int frame_height;
     int frame_width;
     int fps;
@@ -33,8 +43,8 @@ struct MontageClip{
     std::default_random_engine generator ;
     std::uniform_int_distribution<unsigned> distribution;
     std::queue<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > q;
-
     std::function<unsigned()> dice ;
+
     void video_partition(cv::VideoCapture &vid );
     void combineClips(cv::VideoWriter &out);
     void playVideo();

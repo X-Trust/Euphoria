@@ -8,7 +8,7 @@
 
 namespace globals{
     const int clip_size = 3;
-    const std::string classifier_path = "C:\\Dev\\Projects\\Euphoria\\lbpcascade_frontalface.xml";
+    const std::string classifier_path = "F:\\projects\\C++\\Euphoria\\lbpcascade_frontalface.xml";
     const int max_effect_number = 50 ;
 }
 

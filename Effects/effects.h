@@ -20,6 +20,7 @@ bool rotateImage(MontageClip &mntg, eff_args &al);
 bool lensFlare(MontageClip &mntg, eff_args &al);
 bool addImage(MontageClip &mntg, eff_args &al);
 bool diceCheck(MontageClip &mntg, eff_args &al);
+bool addHat(MontageClip &mntg, eff_args &al);
 
 }
 

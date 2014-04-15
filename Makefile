@@ -156,11 +156,19 @@ Makefile: Euphoria.pro C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/win32-g++/qmake.co
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/declarative_debug.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/win32/rtti.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/warn_on.prf \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/qt.prf \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/resources.prf \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/moc.prf \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/win32/opengl.prf \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/uic.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/testcase_targets.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/exceptions.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/yacc.prf \
 		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/mkspecs/features/lex.prf \
-		Euphoria.pro
+		Euphoria.pro \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Widgets.prl \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Gui.prl \
+		C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Core.prl
 	$(QMAKE) -spec win32-g++ CONFIG+=debug CONFIG+=declarative_debug CONFIG+=qml_debug -o Makefile Euphoria.pro
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\spec_pre.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\qdevice.pri:
@@ -259,11 +267,19 @@ C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\qml_debug.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\declarative_debug.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\win32\rtti.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\warn_on.prf:
+C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\qt.prf:
+C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\resources.prf:
+C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\moc.prf:
+C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\win32\opengl.prf:
+C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\uic.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\testcase_targets.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\exceptions.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\yacc.prf:
 C:\Qt\Qt5.2.0\5.2.0\mingw48_32\mkspecs\features\lex.prf:
 Euphoria.pro:
+C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Widgets.prl:
+C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Gui.prl:
+C:/Qt/Qt5.2.0/5.2.0/mingw48_32/lib/Qt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec win32-g++ CONFIG+=debug CONFIG+=declarative_debug CONFIG+=qml_debug -o Makefile Euphoria.pro
 
@@ -274,6 +290,18 @@ all: debug-all release-all FORCE
 clean: debug-clean release-clean FORCE
 distclean: debug-distclean release-distclean FORCE
 	-$(DEL_FILE) Makefile
+
+debug-mocclean:
+	$(MAKE) -f $(MAKEFILE).Debug mocclean
+release-mocclean:
+	$(MAKE) -f $(MAKEFILE).Release mocclean
+mocclean: debug-mocclean release-mocclean
+
+debug-mocables:
+	$(MAKE) -f $(MAKEFILE).Debug mocables
+release-mocables:
+	$(MAKE) -f $(MAKEFILE).Release mocables
+mocables: debug-mocables release-mocables
 
 check: first
 FORCE:

@@ -15,6 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#define FRAME(i) mntg._media[i]._frame
 using std::list;
 using std::sqrt;
 using std::pow;
@@ -33,7 +34,8 @@ void Effects::genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_
         {starburst, "starburst" },
         {rotateImage, "rotateImage"},
         {addImage, "addImage"},
-        {diceCheck, "DiceCheck"}
+        {diceCheck, "DiceCheck"},
+        {addHat, "addHat"}
    };
 
     unsigned roll;
@@ -47,17 +49,13 @@ void Effects::genQueue(std::queue<std::pair<std::function<bool(MontageClip&,eff_
 
 bool Effects::blur(MontageClip &mntg, eff_args &al){
 
-    al.min_frames = al.min_frames % 30;
+    al.min_frames = al.min_frames % 50;
     al.size = al.size % 10;
 
-    for (; al.it != mntg._units.end() || al.min_frames <= 0; al.it++){
-        if (al.it == mntg._units.end()){return true;}
-        for (Mat &frame : al.it->_frames){
-            if (al.min_frames-- <= 0){return true;}
+    for (unsigned i = al.it; i < al.it + al.min_frames and i < mntg._media.size(); i++){
 
-            al.size++;
-            cv::blur(frame, frame, Size(al.size, al.size));
-        }
+        al.size++;
+        cv::blur(mntg._media[i]._frame, mntg._media[i]._frame, Size(al.size, al.size));
     }
     return true;
 }
@@ -68,42 +66,38 @@ bool Effects::starburst(MontageClip &mntg, eff_args &al){
     al.min_frames = al.min_frames % 30;
     std::vector<Mat> spl;
 
-    for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames){
-            if (al.min_frames-- <= 0){return true;}
 
-            split(frame, spl);                // process - extract only one channel
-            for (int i =0; i < 3; ++i){
-                spl[al.min_frames % 3] = Mat::zeros(Size(frame.cols, frame.rows), spl[0].type());
-            }
-            merge(spl, frame);
+    for (unsigned i = al.it; i < al.it + al.min_frames and i < mntg._media.size(); i++){
+
+        split(mntg._media[i]._frame, spl);                // process - extract only one channel
+        for (unsigned i =0; i < 3; ++i){
+            spl[al.min_frames % 3] = Mat::zeros( mntg._media[i]._frame.size(), spl[0].type());
         }
+        merge(spl, mntg._media[i]._frame);
     }
     return true;
 }
 
 bool Effects::rotateImage(MontageClip &mntg, eff_args &al){
 
-    if (al.min_frames == 0) return true;
+    if (al.min_frames == 0){ cout << " BROKE" << endl; return true;}
     int step, border, angle = 0;
 
-    al.min_frames = al.min_frames % 100;
     step = ((mntg.dice() % 9 + 1) * 360) / al.min_frames;
     border = mntg.frame_width - mntg.frame_height; // THIS CAN AND WILL BREAK!!!!! cell phone vids...
 
-    for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames){
-            if (al.min_frames-- <= 0){return true;}
 
-            copyMakeBorder(frame,frame,border,border,border,border,0,cv::Scalar(0,0,0));
-            // can probably use this line of code to do some crazy stuff
-            Mat matRotation = getRotationMatrix2D(Point(frame.cols / 2, frame.rows / 2), (angle - 180), 1);
-            // Rotate the image
-            warpAffine(frame, matRotation, matRotation, frame.size());
-            frame = Mat(matRotation, cv::Rect(border, border, mntg.frame_width , mntg.frame_height));
-            angle += step;
-        }
+    for (unsigned i = al.it; i < al.it + al.min_frames and i < mntg._media.size(); i++){
+
+        copyMakeBorder(mntg._media[i]._frame,mntg._media[i]._frame,border,border,border,border,0,cv::Scalar(0,0,0));
+        // can probably use this line of code to do some crazy stuff
+        Mat matRotation = getRotationMatrix2D(Point(mntg._media[i]._frame.cols / 2, mntg._media[i]._frame.rows / 2), (angle - 180), 1);
+        // Rotate the image
+        warpAffine(mntg._media[i]._frame, matRotation, matRotation, mntg._media[i]._frame.size());
+        mntg._media[i]._frame = Mat(matRotation, cv::Rect(border, border, mntg.frame_width , mntg.frame_height));
+        angle += step;
     }
+
     return true;
 }
 
@@ -113,27 +107,56 @@ bool Effects::lensFlare( MontageClip &mntg, eff_args &al){
 
 bool Effects::addImage(MontageClip &mntg, eff_args &al){
 
-    if (al.min_frames == 0) return true;
-    Mat new_image = cv::imread("F:\\projects\\C++\\Euphoria\\doge.jpg");
+    Mat new_image = cv::imread("F:\\projects\\C++\\Euphoria\\imgres.jpg");
 
     // select movement functions
     // have movement function act like effect function.
     // return a movement
 
-    for (; al.it != mntg._units.end(); al.it++){
-        for (Mat &frame : al.it->_frames){
-            if (al.min_frames-- <= 0){return true;}
+
+    for (unsigned i = al.it; i < al.it + al.min_frames and i < mntg._media.size(); i++){
 
             //apply functions and image to frame
            // things that will do stuff
+
+    }
+
+    return true;
+}
+
+bool Effects::addHat(MontageClip &mntg, eff_args &al){
+
+    Point p;
+    Mat new_image = cv::imread("F:\\projects\\C++\\Euphoria\\imgres.jpg");
+    int border = 500;
+
+    cout << al.it << " THIS IS THE IT" << endl;
+    for (unsigned i = al.it; i < al.it + al.min_frames and i < mntg._media.size(); i++){
+
+        if( mntg._media[i]._faces.size() == 0 ){
+            //No face found
+            cout << "broke " << mntg._media[i]._faces.size() << endl;
+            break;
+        }
+
+        for( auto facialROI: mntg._media[i]._faces){
+             (p.x = facialROI.x);
+            (p.y = facialROI.y);
+            cout << "i " << i << std::endl ;
+            cout << "total " << al.it + al.min_frames << "out of " <<  mntg._media.size() << std::endl;
+
+            cv::Rect roi( p, new_image.size() );
+            Mat dist = mntg._media[i]._frame( roi ) ;
+            new_image.copyTo( dist, new_image );
         }
     }
     return true;
 }
 
+
 bool Effects::diceCheck(MontageClip &mntg, eff_args &al){
 
-    for (int i=0;i < 20; i++)
+    for (unsigned i=0;i < 20; i++)
         cout << mntg.dice() << endl;
-
+    return true;
 }

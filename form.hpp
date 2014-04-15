@@ -22,6 +22,7 @@ public:
 private slots:
     void on_pushButton_clicked();
     void on_playVideo_clicked();
+    void on_advancedOptions_clicked();
 
 private:
     Ui::Form *ui;

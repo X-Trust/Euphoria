@@ -27,7 +27,7 @@ Form::Form(QWidget *parent) : QWidget(parent), ui(new Ui::Form){
 
     ui->setupUi(this);
     this->ui->playVideo->setFlat(true);
-    this->ui->playVideo->setStyleSheet("* {color: gray }");
+
     progress = 0 ;
     total_progress = 0;
 }
@@ -46,7 +46,7 @@ void Form::on_pushButton_clicked(){
         return;
     }
 
-    mntg._units.clear();
+    mntg._media.clear();
     mntg.fps = video.get(CV_CAP_PROP_FPS);
     mntg.frame_width  = video.get(CV_CAP_PROP_FRAME_WIDTH);
     mntg.frame_height = video.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -56,8 +56,6 @@ void Form::on_pushButton_clicked(){
     this->ui->SSD_Width->display(mntg.frame_width);
     this->ui->SSD_Height->display(mntg.frame_height);
     this->ui->playVideo->setFlat( false );
-    this->ui->playVideo->setStyleSheet("* {color: black}");
-
     //try to use Qstrings here
     String temp = this->ui->seedBox->text().toLocal8Bit().constData() ;
 
@@ -94,3 +92,15 @@ void Form::on_playVideo_clicked(){
         mntg.playVideo();
 }
 
+
+void Form::on_advancedOptions_clicked(){
+
+
+    this->ui->advancedOptions->hide();
+
+    for (int i = 400; i <= 700; i++){
+        this->resize(1000, i);
+        waitKey(15);
+    }
+
+}

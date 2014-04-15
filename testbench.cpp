@@ -24,20 +24,19 @@
 using namespace std;
 using namespace cv;
 
-TestBench::TestBench(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::TestBench)
-{
-    ui->setupUi(this);
+TestBench::TestBench(QWidget *parent): QMainWindow(parent), ui(new Ui::TestBench){
 
+    ui->setupUi(this);
 
     QString filePath = QFileDialog::getOpenFileName(this, tr("Open Video"), ".", tr("Image Files (*.avi *.mp4 )"));
     VideoCapture video( filePath.toLocal8Bit().constData() );
+
     if (!video.isOpened()){cout << "could not open vid" << endl ;return;}
-    mntg._units.clear();
+    mntg._media.clear();
     mntg.fps = video.get(CV_CAP_PROP_FPS);
     mntg.frame_width  = video.get(CV_CAP_PROP_FRAME_WIDTH);
     mntg.frame_height = video.get(CV_CAP_PROP_FRAME_HEIGHT);
+    mntg.video_partition(video);
 
     String temp = this->ui->seedBox->text().toLocal8Bit().constData() ;
     unsigned seed;
@@ -52,9 +51,11 @@ TestBench::TestBench(QWidget *parent) :
         seed = std::chrono::system_clock::now().time_since_epoch().count();
         this->ui->seedBox->insert(QString::number(seed));
     }
-
     mntg.bindDice(seed);
-    mntg.video_partition(video);
+
+    //should be able to delete video here
+
+    //this for testing. genQueue value should be false
     Effects::genQueue(q, mntg, true);
     while (q.size()){ funcs.push_back( q.front() ); q.pop();}
 
@@ -80,35 +81,24 @@ unsigned TestBench::isValid( unsigned temp ){
 }
 
 
-void TestBench::on_ARGBOX_IT_editingFinished(){
-}
+void TestBench::on_ARGBOX_IT_editingFinished(){}
 
-void TestBench::on_ARGBOX_PA_1_editingFinished(){
-}
+void TestBench::on_ARGBOX_PA_1_editingFinished(){}
 
-void TestBench::on_ARGBOX_PA_2_editingFinished(){
-}
+void TestBench::on_ARGBOX_PA_2_editingFinished(){}
 
-void TestBench::on_ARGBOX_PB_1_editingFinished(){
-}
+void TestBench::on_ARGBOX_PB_1_editingFinished(){}
 
-void TestBench::on_ARGBOX_PB_2_editingFinished(){
-}
+void TestBench::on_ARGBOX_PB_2_editingFinished(){}
 
-void TestBench::on_ARGBOX_MINF_editingFinished(){
-}
+void TestBench::on_ARGBOX_MINF_editingFinished(){}
 
-void TestBench::on_ARGBOX_SIZE_editingFinished(){
-}
+void TestBench::on_ARGBOX_SIZE_editingFinished(){}
 
-void TestBench::on_ARGBOX_NOR_editingFinished(){
-}
+void TestBench::on_ARGBOX_NOR_editingFinished(){}
 
 void TestBench::on_pushButton_clicked(){
 
-    if( funcs.size() == 0 ) return;
-    int progress = 1 ;
-    double average_frun_time = 0, average_run_time = 0;
     vector<int> index;
     QList<QCheckBox*> list = this->ui->scrollArea->widget()->findChildren<QCheckBox*>(); ;
 
@@ -117,8 +107,13 @@ void TestBench::on_pushButton_clicked(){
         if( item->isChecked() ) index.push_back(i);
         i++;
     }
+    if (index.size() == 0) return;
 
+    
+    double average_frun_time = 0, average_run_time = 0;
     number_of_runs = this->ui->ARGBOX_NOR->value();
+    int progress = 1 ;
+    this->ui->ProgressBar->setValue(0);
     this->ui->ProgressBar->setMinimum(0);
     this->ui->ProgressBar->setMaximum( number_of_runs * (index.size()) );
     cout << "GOING!" << endl;
@@ -128,16 +123,28 @@ void TestBench::on_pushButton_clicked(){
 
             std::clock_t start = std::clock();
 
-            int temp = isValid(this->ui->ARGBOX_IT->value());
-            arglist.it = mntg._units.begin();
-            advance( arglist.it, temp);
+            //set start location in the clip
+            arglist.it = isValid(this->ui->ARGBOX_IT->value()) % mntg._media.size();
 
-            cout << "PAx "<<(arglist.A.x = isValid(this->ui->ARGBOX_PA_1->value()) % mntg.frame_width) << endl;
-            cout << "PAy "<<(arglist.A.y = isValid(this->ui->ARGBOX_PA_2->value()) % mntg.frame_height) << endl;
-            cout << "PBx "<<(arglist.B.x = isValid(this->ui->ARGBOX_PB_1->value()) % mntg.frame_width) << endl;
-            cout << "PBy "<<(arglist.B.y = isValid(this->ui->ARGBOX_PB_2->value()) % mntg.frame_height) << endl;
-            cout << "MF "<<(arglist.min_frames = isValid(this->ui->ARGBOX_MINF->value()) % 50) << endl;
-            cout << "SZ  "<<(arglist.size = isValid(this->ui->ARGBOX_SIZE->value())) << endl << endl;
+            //set start and end location of the frame where the effect will be applied
+            arglist.A.x = isValid(this->ui->ARGBOX_PA_1->value()) % mntg.frame_width;
+            arglist.A.y = isValid(this->ui->ARGBOX_PA_2->value()) % mntg.frame_height;
+            arglist.B.x = isValid(this->ui->ARGBOX_PB_1->value()) % mntg.frame_width;
+            arglist.B.y = isValid(this->ui->ARGBOX_PB_2->value()) % mntg.frame_height;
+
+            //set the size of the effect. Size should be checked by effect
+            arglist.size = isValid(this->ui->ARGBOX_SIZE->value()) ;
+
+            //set the minimum number of frames to opperate on
+            arglist.min_frames = isValid(this->ui->ARGBOX_MINF->value()) % mntg._media.size() ;
+
+            cout << "IT  " << arglist.it << " Out of " << mntg._media.size() << endl;
+            cout << "PAx " << arglist.A.x << endl;
+            cout << "PAy " << arglist.A.y << endl;
+            cout << "PBx " << arglist.B.x << endl;
+            cout << "PBy " << arglist.B.y << endl;
+            cout << "MF  " << arglist.min_frames << endl;
+            cout << "SZ  " << arglist.size << endl << endl;
 
             std::clock_t fStart = std::clock();
 
@@ -162,11 +169,9 @@ void TestBench::on_playVideo_clicked(){
     mntg.playVideo();
 }
 
-
-
-//PAx 435
-//PAy 308
-//PBx 289
-//PBy 102
-//MF    0
-//SZ  3497928941
+void TestBench::on_pushButton_2_clicked()
+{
+    std::clock_t start = std::clock();
+    mntg.addAttributes();
+    cout << "Run time for adding attributes is " << std::clock() - start << " ms" << endl ;
+}

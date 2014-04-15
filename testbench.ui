@@ -42,6 +42,9 @@
     <property name="styleSheet">
      <string notr="true">font: 20pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
+    <property name="maximum">
+     <number>99999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_MINF">
     <property name="geometry">
@@ -55,6 +58,9 @@
     <property name="styleSheet">
      <string notr="true">font: 20pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
+    <property name="maximum">
+     <number>99999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_SIZE">
     <property name="geometry">
@@ -67,6 +73,9 @@
     </property>
     <property name="styleSheet">
      <string notr="true">font: 20pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <property name="maximum">
+     <number>99999</number>
     </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_PA_1">
@@ -82,7 +91,7 @@
      <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
     <property name="maximum">
-     <number>500</number>
+     <number>99999</number>
     </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_PA_2">
@@ -98,7 +107,7 @@
      <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
     <property name="maximum">
-     <number>500</number>
+     <number>99999</number>
     </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_PB_1">
@@ -113,6 +122,9 @@
     <property name="styleSheet">
      <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
+    <property name="maximum">
+     <number>99999</number>
+    </property>
    </widget>
    <widget class="QSpinBox" name="ARGBOX_PB_2">
     <property name="geometry">
@@ -125,6 +137,9 @@
     </property>
     <property name="styleSheet">
      <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <property name="maximum">
+     <number>99999</number>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -157,7 +172,7 @@
     <property name="geometry">
      <rect>
       <x>410</x>
-      <y>170</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -173,7 +188,7 @@
     <property name="geometry">
      <rect>
       <x>530</x>
-      <y>170</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -189,7 +204,7 @@
     <property name="geometry">
      <rect>
       <x>640</x>
-      <y>170</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -205,7 +220,7 @@
     <property name="geometry">
      <rect>
       <x>750</x>
-      <y>170</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -221,7 +236,7 @@
     <property name="geometry">
      <rect>
       <x>860</x>
-      <y>170</y>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -237,7 +252,7 @@
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>170</y>
+      <y>180</y>
       <width>121</width>
       <height>21</height>
      </rect>
@@ -269,7 +284,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>100</y>
+      <y>120</y>
       <width>261</width>
       <height>31</height>
      </rect>
@@ -278,7 +293,7 @@
      <string notr="true">font: 18pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
     <property name="text">
-     <string>Test multiple functions </string>
+     <string>Functions Test</string>
     </property>
     <property name="margin">
      <number>0</number>
@@ -310,14 +325,46 @@
    <widget class="QPushButton" name="playVideo">
     <property name="geometry">
      <rect>
-      <x>690</x>
-      <y>30</y>
+      <x>30</x>
+      <y>350</y>
       <width>231</width>
       <height>81</height>
      </rect>
     </property>
     <property name="text">
      <string>PLay Video</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>300</y>
+      <width>81</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add Attributes</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>10</y>
+      <width>261</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 18pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Seed</string>
+    </property>
+    <property name="margin">
+     <number>0</number>
     </property>
    </widget>
   </widget>
