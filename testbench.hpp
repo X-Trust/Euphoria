@@ -3,9 +3,9 @@
 
 #include <QMainWindow>
 #include <functional>
-#include "MontageClip.hpp"
-#include "Unit.hpp"
+
 #include "Globals.h"
+#include "MontageClip.hpp"
 #include "Effects/effects.h"
 
 namespace Ui {

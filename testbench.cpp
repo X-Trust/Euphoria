@@ -1,13 +1,6 @@
-#include "testbench.hpp"
-#include "ui_testbench.h"
-#include "Effects/effects.h"
-
-#include <typeinfo>
 #include <functional>
 #include <chrono>
-#include <climits>
 #include <iostream>
-#include <thread>
 #include <ctime>
 
 #include <QFileDialog>
@@ -18,6 +11,10 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QList>
+
+#include "ui_testbench.h"
+#include "testbench.hpp"
+#include "Effects/effects.h"
 
 #define _(x) #x
 
@@ -68,25 +65,11 @@ TestBench::TestBench(QWidget *parent): QMainWindow(parent), ui(new Ui::TestBench
         containerLayout->addWidget(checkbox);
     }
 
-
-
-
-    //this for testing. genQueue value should be false
-    //Effects::genQueue(q, mntg, true);
-    //while (q.size()){ funcs.push_back( q.front() ); q.pop();}
-
-    //Dynamically adds function names to scroll menue for testing multiple functions
-
-//    for(auto func: funcs){
-//}
-
-
     cout << mntg.frame_height << "FRAME HEIGHT" << endl;
     cout << mntg.frame_width << "FRAME WIDTH" << endl ;
 }
 
-TestBench::~TestBench()
-{
+TestBench::~TestBench(){
     delete ui;
 }
 
@@ -230,7 +213,7 @@ void TestBench::on_fullTest_clicked()
 
             std::clock_t fStart = std::clock();
 
-            funcs[it].first( mntg, arglist);
+             factory.makeEffect(it)( mntg, arglist);
 
             average_frun_time += std::clock() - fStart;
             average_run_time  += std::clock() - start;
@@ -241,8 +224,8 @@ void TestBench::on_fullTest_clicked()
         average_frun_time /= number_of_runs ;
         average_run_time /= number_of_runs ;
 
-        cout << "Done with " << funcs[it].second << endl;
-        cout << "Average run time for " << funcs[it].second << " is " << average_frun_time << " ms" << endl ;
+        cout << "Done with " << factory.getFName(it) << endl;
+        cout << "Average run time for " << factory.getFName(it) << " is " << average_frun_time << " ms" << endl ;
         cout << "Average run time for function generation is " << average_run_time << " ms" << endl ;
     }
 

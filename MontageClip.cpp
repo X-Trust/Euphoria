@@ -1,16 +1,13 @@
-#include "MontageClip.hpp"
-#include "Unit.hpp"
-#include "Effects/effects.h"
-#include "Globals.h"
-
 #include <vector>
 #include <queue>
 #include <functional>
 
+#include "MontageClip.hpp"
+#include "Effects/effects.h"
+#include "Globals.h"
+
 using namespace std;
 using namespace cv;
-
-
 
 unsigned MontageClip::generateQueue(){
     Effects::genQueue(q, *this, false);
