@@ -10,6 +10,10 @@
 using namespace std;
 using namespace cv;
 
+MontageClip& MontageClip::getInstance() {
+    static MontageClip instance;
+    return instance;
+}
 
 
 unsigned MontageClip::generateQueue(){

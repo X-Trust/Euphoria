@@ -21,7 +21,7 @@ public:
     ~TestBench();
 
     eff_args arglist;
-    MontageClip mntg;
+    MontageClip& mntg;
     EffectFactory factory;
     std::queue< std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > q;// dont need
     std::vector<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > funcs; // dont need

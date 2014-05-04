@@ -23,7 +23,7 @@ void stuff(){
     cout << "THIS" << endl;
 }
 
-Form::Form(QWidget *parent) : QWidget(parent), ui(new Ui::Form){
+Form::Form(QWidget *parent) : QWidget(parent), ui(new Ui::Form), mntg(MontageClip::getInstance()) {
 
     ui->setupUi(this);
     this->ui->playVideo->setFlat(true);

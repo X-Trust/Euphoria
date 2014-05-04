@@ -33,8 +33,8 @@ struct Attributes{
 
 };
 
-struct MontageClip{
-
+class MontageClip{
+public:
     std::vector<Attributes> _media;
     int frame_height;
     int frame_width;
@@ -52,6 +52,10 @@ struct MontageClip{
     unsigned generateQueue();
     bool addEffects();
     void bindDice( unsigned seed );
+
+    static MontageClip& getInstance();
+private:
+    MontageClip() {};
 };
 
 #endif // MONTAGECLIP_HPP

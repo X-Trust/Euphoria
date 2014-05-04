@@ -11,7 +11,7 @@ class Form;
 
 class Form : public QWidget{
     Q_OBJECT
-    MontageClip mntg ;
+    MontageClip& mntg;
 public:
     int progress;
     int total_progress;

@@ -24,7 +24,7 @@
 using namespace std;
 using namespace cv;
 
-TestBench::TestBench(QWidget *parent): QMainWindow(parent), ui(new Ui::TestBench){
+TestBench::TestBench(QWidget *parent): QMainWindow(parent), ui(new Ui::TestBench), mntg(MontageClip::getInstance()){
 
     ui->setupUi(this);
 
