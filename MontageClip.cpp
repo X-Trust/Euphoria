@@ -19,8 +19,6 @@ unsigned MontageClip::generateQueue(){
 
 void MontageClip::video_partition( VideoCapture &vid ){
     _media.resize(vid.get(CV_CAP_PROP_FRAME_COUNT)); // Sets the starting size of the array
-    cout << _media.size() << endl;
-    cout << "THINGS SHOULD WORK" << endl;
     cout << _media.size() << endl ;
     for(unsigned i = 0; i < _media.size(); i++)
          vid.read( _media[i]._frame );
@@ -32,8 +30,10 @@ void MontageClip::video_partition( VideoCapture &vid ){
 // _units.push_back( temp );
 
 void MontageClip::addAttributes(){
+cout << "----------> " << _media.size() << endl;
     for(unsigned i = 0; i < _media.size(); i++)
          _media[i].detectFaces();
+    std::cout << "THIS YOLO SSWAG" << endl;
 
         //Dont forget to add any additional functions
 }
@@ -61,26 +61,25 @@ bool MontageClip::addEffects(){
 
     eff_args arglist;
 
-   // while(!q.empty()){
+    //set start location in the clip
+    arglist.it = dice() % _media.size();
 
-        //set start location in the clip
-        arglist.it = dice() % _media.size();
+    //set start and end location of the frame where the effect will be applied
+    arglist.A.x = dice() % frame_width;
+    arglist.A.y = dice() % frame_height;
 
-        //set start and end location of the frame where the effect will be applied
-        arglist.A.x = dice() % frame_width; arglist.A.y = dice() % frame_height;
-        arglist.B.x = dice() % frame_width; arglist.B.y = dice() % frame_height;
+    arglist.B.x = dice() % frame_width;
+    arglist.B.y = dice() % frame_height;
 
-        //set the size of the effect. Size should be checked by effect
-        arglist.size = dice();
+    //set the size of the effect. Size should be checked by effect
+    arglist.size = dice();
 
-        //set the minimum number of frames to opperate on
-        //This should be modded by the function
-        arglist.min_frames = dice();
+    //set the minimum number of frames to opperate on
+    //This should be modded by the function
+    arglist.min_frames = dice();
+    std::cout << dice() << endl;
+    EffectFactory::makeEffect( (int)dice() )( *this, arglist);
 
-        q.front().first(*this,arglist);
-
-        q.pop();
-    //}
     return true;
 }
 

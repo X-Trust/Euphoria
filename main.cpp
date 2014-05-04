@@ -8,9 +8,9 @@ using namespace cv;
 int main(int argc, char *argv[]){
 
     QApplication a(argc, argv);
- //   Form w;
- //   w.show();
-    TestBench w;
-    w.show();
+  Form w;
+   w.show();
+//  TestBench w;
+//  w.show();
     return a.exec();
 }

@@ -6,6 +6,7 @@
 #include "MontageClip.hpp"
 #include "Unit.hpp"
 #include "Globals.h"
+#include "Effects/effects.h"
 
 namespace Ui {
 class TestBench;
@@ -21,37 +22,22 @@ public:
 
     eff_args arglist;
     MontageClip mntg;
-    std::queue< std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > q;
-    std::vector<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > funcs;
+    EffectFactory factory;
+    std::queue< std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > q;// dont need
+    std::vector<std::pair<std::function<bool(MontageClip&,eff_args&)>, std::string > > funcs; // dont need
 
     int number_of_runs;
 
     unsigned isValid(unsigned temp);
 
 private slots:
-
-
-    void on_ARGBOX_IT_editingFinished();
-
-    void on_ARGBOX_PA_1_editingFinished();
-
-    void on_ARGBOX_PA_2_editingFinished();
-
-    void on_ARGBOX_PB_1_editingFinished();
-
-    void on_ARGBOX_PB_2_editingFinished();
-
-    void on_ARGBOX_MINF_editingFinished();
-
-    void on_ARGBOX_SIZE_editingFinished();
-
-    void on_ARGBOX_NOR_editingFinished();
-
     void on_pushButton_clicked();
 
     void on_playVideo_clicked();
 
     void on_pushButton_2_clicked();
+
+    void on_fullTest_clicked();
 
 private:
     Ui::TestBench *ui;

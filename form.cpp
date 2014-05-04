@@ -47,6 +47,7 @@ void Form::on_pushButton_clicked(){
     }
 
     mntg._media.clear();
+
     mntg.fps = video.get(CV_CAP_PROP_FPS);
     mntg.frame_width  = video.get(CV_CAP_PROP_FRAME_WIDTH);
     mntg.frame_height = video.get(CV_CAP_PROP_FRAME_HEIGHT);
@@ -72,16 +73,20 @@ void Form::on_pushButton_clicked(){
         this->ui->seedBox->insert(QString::number(seed));
     }
 
+
+
     mntg.bindDice(seed);
     mntg.video_partition(video);
-    mntg.generateQueue();
-
+    mntg.addAttributes();
+   // mntg.generateQueue();
+    int NFC = mntg.dice() % 30;
     this->ui->progressBar->setMaximum(0);
-    this->ui->progressBar->setMaximum( mntg.q.size() );
+    this->ui->progressBar->setMaximum( NFC );
     this->ui->progressBar->setValue(0);
 
     progress = 0;
-    while(mntg.q.size()){
+
+    for (int i = 0; i < NFC; i++){
         mntg.addEffects();
         this->ui->progressBar->setValue(++progress);
     }

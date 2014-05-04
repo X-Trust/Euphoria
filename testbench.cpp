@@ -55,19 +55,34 @@ TestBench::TestBench(QWidget *parent): QMainWindow(parent), ui(new Ui::TestBench
 
     //should be able to delete video here
 
-    //this for testing. genQueue value should be false
-    Effects::genQueue(q, mntg, true);
-    while (q.size()){ funcs.push_back( q.front() ); q.pop();}
-
-    //Dynamically adds function names to scroll menue for testing multiple functions
+    int number_of_functions = factory.getFCount();
     QWidget *container = new QWidget;
     QVBoxLayout* containerLayout = new QVBoxLayout();
     container->setLayout(containerLayout);
     this->ui->scrollArea->setWidget(container);
-    for(auto func: funcs){
-        QCheckBox *checkbox = new QCheckBox( QString::fromStdString(func.second) );
+
+
+    for (int i = 0; i < number_of_functions; i++ ){
+        QCheckBox *checkbox = new QCheckBox(
+                    QString::fromStdString( factory.getFName(i)));
         containerLayout->addWidget(checkbox);
     }
+
+
+
+
+    //this for testing. genQueue value should be false
+    //Effects::genQueue(q, mntg, true);
+    //while (q.size()){ funcs.push_back( q.front() ); q.pop();}
+
+    //Dynamically adds function names to scroll menue for testing multiple functions
+
+//    for(auto func: funcs){
+//}
+
+
+    cout << mntg.frame_height << "FRAME HEIGHT" << endl;
+    cout << mntg.frame_width << "FRAME WIDTH" << endl ;
 }
 
 TestBench::~TestBench()
@@ -79,23 +94,6 @@ unsigned TestBench::isValid( unsigned temp ){
     if (temp==0) temp = mntg.dice();
     return temp;
 }
-
-
-void TestBench::on_ARGBOX_IT_editingFinished(){}
-
-void TestBench::on_ARGBOX_PA_1_editingFinished(){}
-
-void TestBench::on_ARGBOX_PA_2_editingFinished(){}
-
-void TestBench::on_ARGBOX_PB_1_editingFinished(){}
-
-void TestBench::on_ARGBOX_PB_2_editingFinished(){}
-
-void TestBench::on_ARGBOX_MINF_editingFinished(){}
-
-void TestBench::on_ARGBOX_SIZE_editingFinished(){}
-
-void TestBench::on_ARGBOX_NOR_editingFinished(){}
 
 void TestBench::on_pushButton_clicked(){
 
@@ -109,9 +107,10 @@ void TestBench::on_pushButton_clicked(){
     }
     if (index.size() == 0) return;
 
-    
+
     double average_frun_time = 0, average_run_time = 0;
     number_of_runs = this->ui->ARGBOX_NOR->value();
+if( number_of_runs == 0 ) number_of_runs++ ;
     int progress = 1 ;
     this->ui->ProgressBar->setValue(0);
     this->ui->ProgressBar->setMinimum(0);
@@ -148,7 +147,7 @@ void TestBench::on_pushButton_clicked(){
 
             std::clock_t fStart = std::clock();
 
-            funcs[it].first( mntg, arglist);
+            factory.makeEffect(it)( mntg, arglist);
 
             average_frun_time += std::clock() - fStart;
             average_run_time  += std::clock() - start;
@@ -175,3 +174,78 @@ void TestBench::on_pushButton_2_clicked()
     mntg.addAttributes();
     cout << "Run time for adding attributes is " << std::clock() - start << " ms" << endl ;
 }
+
+
+void TestBench::on_fullTest_clicked()
+{
+    vector<int> index;
+    QList<QCheckBox*> list = this->ui->scrollArea->widget()->findChildren<QCheckBox*>(); ;
+
+    int i = 0;
+    foreach( QCheckBox *item, list){
+        if( item->isChecked() ) index.push_back(i);
+        i++;
+    }
+    if (index.size() == 0) return;
+
+
+    double average_frun_time = 0, average_run_time = 0;
+    number_of_runs = this->ui->ARGBOX_NOR->value();
+    if( number_of_runs == 0) number_of_runs++;
+    int progress = 1 ;
+    this->ui->ProgressBar->setValue(0);
+    this->ui->ProgressBar->setMinimum(0);
+    this->ui->ProgressBar->setMaximum( number_of_runs * (index.size()) );
+    cout << "GOING!" << endl;
+
+    for( auto it: index){
+        for(int i = 0; i < number_of_runs; i++){
+
+            std::clock_t start = std::clock();
+
+            //set start location in the clip
+
+            //arglist.it = isValid(this->ui->ARGBOX_IT->value()) % mntg._media.size();
+            arglist.it = 0;
+            //set start and end location of the frame where the effect will be applied
+            arglist.A.x = isValid(this->ui->ARGBOX_PA_1->value()) % mntg.frame_width;
+            arglist.A.y = isValid(this->ui->ARGBOX_PA_2->value()) % mntg.frame_height;
+            arglist.B.x = isValid(this->ui->ARGBOX_PB_1->value()) % mntg.frame_width;
+            arglist.B.y = isValid(this->ui->ARGBOX_PB_2->value()) % mntg.frame_height;
+
+            //set the size of the effect. Size should be checked by effect
+            arglist.size = isValid(this->ui->ARGBOX_SIZE->value()) ;
+
+            //set the minimum number of frames to opperate on
+            //arglist.min_frames = isValid(this->ui->ARGBOX_MINF->value()) % mntg._media.size() ;
+            arglist.min_frames = mntg._media.size();
+
+            cout << "IT  " << arglist.it << " Out of " << mntg._media.size() << endl;
+            cout << "PAx " << arglist.A.x << endl;
+            cout << "PAy " << arglist.A.y << endl;
+            cout << "PBx " << arglist.B.x << endl;
+            cout << "PBy " << arglist.B.y << endl;
+            cout << "MF  " << arglist.min_frames << endl;
+            cout << "SZ  " << arglist.size << endl << endl;
+
+            std::clock_t fStart = std::clock();
+
+            funcs[it].first( mntg, arglist);
+
+            average_frun_time += std::clock() - fStart;
+            average_run_time  += std::clock() - start;
+
+            this->ui->ProgressBar->setValue(progress++);
+        }
+
+        average_frun_time /= number_of_runs ;
+        average_run_time /= number_of_runs ;
+
+        cout << "Done with " << funcs[it].second << endl;
+        cout << "Average run time for " << funcs[it].second << " is " << average_frun_time << " ms" << endl ;
+        cout << "Average run time for function generation is " << average_run_time << " ms" << endl ;
+    }
+
+    mntg.playVideo();
+}
+
